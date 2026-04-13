@@ -2,6 +2,21 @@
 
 Portfolio-grade batch data engineering project for a Myanmar-focused e-commerce business. The platform simulates realistic raw batch ingestion, Spark-based bronze/silver/gold processing, PostgreSQL warehouse loading, and Airflow orchestration for daily analytics workloads.
 
+## မြန်မာဘာသာဖြင့် အကျဉ်းချုပ်
+
+ဤ project သည် မြန်မာနိုင်ငံအခြေပြု e-commerce လုပ်ငန်းတစ်ခုအတွက် batch data engineering platform ကို portfolio အဆင့်ဖြင့် တည်ဆောက်ထားသော project ဖြစ်ပါသည်။ Raw data များကို ingest လုပ်ခြင်း၊ Spark ဖြင့် bronze/silver/gold layer များအဖြစ် transform လုပ်ခြင်း၊ PostgreSQL warehouse ထဲသို့ analytics-ready table များ load လုပ်ခြင်းနှင့် Airflow ဖြင့် workflow orchestration လုပ်ခြင်းတို့ကို end-to-end ပြသထားပါသည်။
+
+အဓိကအားဖြင့် ဤ project မှာ အောက်ပါအရာများကို ဖော်ပြထားပါသည်။
+
+- မြန်မာဈေးကွက်နဲ့ ကိုက်ညီသော synthetic e-commerce dataset များ
+- `bronze` ၊ `silver` ၊ `gold` အဆင့်ခွဲထားသော medallion-style data lake design
+- PySpark ဖြင့် daily batch processing နှင့် `batch_date` အလိုက် incremental run များ
+- PostgreSQL analytics warehouse နှင့် fact / dimension table design
+- Airflow DAG ဖြင့် pipeline orchestration design
+- data quality validation, audit logging, business SQL query use cases
+
+ဒီ project ကို အသုံးပြုခြင်းဖြင့် Data Engineer တစ်ယောက်အနေနဲ့ raw source data ကနေ analytics-ready warehouse အထိ ဘယ်လို pipeline တည်ဆောက်ရမလဲ၊ data quality ကို ဘယ်လိုထိန်းမလဲ၊ incremental batch processing ကို ဘယ်လို design လုပ်မလဲ ဆိုတာများကို လက်တွေ့နီးပါး နားလည်နိုင်ပါသည်။
+
 ## What This Project Covers
 
 - Myanmar-focused synthetic e-commerce datasets
