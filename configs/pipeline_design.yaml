@@ -1,0 +1,32 @@
+project:
+  name: myanmar-ecommerce-batch-platform
+  domain: batch-data-engineering
+  focus: myanmar-ecommerce
+
+layers:
+  bronze:
+    format: parquet
+    source: raw_csv_batches
+    partition: batch_date
+  silver:
+    format: parquet
+    purpose: cleaned_and_validated
+    partition: batch_date
+  gold:
+    format: parquet
+    purpose: analytics_ready
+    partition: batch_date
+
+entities:
+  dimensions:
+    - dim_customer
+    - dim_product
+    - dim_seller
+    - dim_region
+    - dim_date
+  facts:
+    - fact_orders
+    - fact_order_items
+    - fact_payments
+    - fact_inventory_snapshot
+    - fact_delivery_performance

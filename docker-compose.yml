@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: myanmar-ecommerce-postgres
+    environment:
+      POSTGRES_DB: ${WAREHOUSE_DB:-myanmar_commerce}
+      POSTGRES_USER: ${WAREHOUSE_USER:-postgres}
+      POSTGRES_PASSWORD: ${WAREHOUSE_PASSWORD:-postgres}
+    ports:
+      - "${WAREHOUSE_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/schema:/docker-entrypoint-initdb.d
+
+  airflow-webserver:
+    image: apache/airflow:2.10.2
+    container_name: myanmar-ecommerce-airflow-webserver
+    depends_on:
+      - postgres
+      - airflow-init
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${WAREHOUSE_USER:-postgres}:${WAREHOUSE_PASSWORD:-postgres}@postgres:5432/${WAREHOUSE_DB:-myanmar_commerce}
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR:-LocalExecutor}
+      AIRFLOW__CORE__LOAD_EXAMPLES: ${AIRFLOW__CORE__LOAD_EXAMPLES:-False}
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: ${AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION:-True}
+    command: webserver
+    user: "${AIRFLOW_UID:-50000}:0"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./:/opt/airflow/project
+    ports:
+      - "8080:8080"
+
+  airflow-scheduler:
+    image: apache/airflow:2.10.2
+    container_name: myanmar-ecommerce-airflow-scheduler
+    depends_on:
+      - postgres
+      - airflow-init
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${WAREHOUSE_USER:-postgres}:${WAREHOUSE_PASSWORD:-postgres}@postgres:5432/${WAREHOUSE_DB:-myanmar_commerce}
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR:-LocalExecutor}
+      AIRFLOW__CORE__LOAD_EXAMPLES: ${AIRFLOW__CORE__LOAD_EXAMPLES:-False}
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: ${AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION:-True}
+    command: scheduler
+    user: "${AIRFLOW_UID:-50000}:0"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./:/opt/airflow/project
+
+  airflow-init:
+    image: apache/airflow:2.10.2
+    container_name: myanmar-ecommerce-airflow-init
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${WAREHOUSE_USER:-postgres}:${WAREHOUSE_PASSWORD:-postgres}@postgres:5432/${WAREHOUSE_DB:-myanmar_commerce}
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR:-LocalExecutor}
+      AIRFLOW__CORE__LOAD_EXAMPLES: ${AIRFLOW__CORE__LOAD_EXAMPLES:-False}
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: ${AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION:-True}
+    command: >
+      bash -c "airflow db migrate &&
+      airflow users create --username admin --firstname Data --lastname Engineer --role Admin --email admin@example.com --password admin"
+    user: "${AIRFLOW_UID:-50000}:0"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./:/opt/airflow/project
+
+volumes:
+  postgres_data:

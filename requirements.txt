@@ -1,0 +1,11 @@
+apache-airflow==2.10.2
+apache-airflow-providers-postgres==5.13.1
+faker==37.1.0
+psycopg2-binary==2.9.10
+pydantic==2.11.3
+pydantic-settings==2.8.1
+pyarrow==18.1.0
+pyspark==3.5.5
+pytest==8.3.5
+python-dotenv==1.0.1
+sqlalchemy>=1.4.36,<2.0
